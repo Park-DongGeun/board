@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    # mysql ??
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # DB Source Url
+    url: jdbc:mysql://localhost:3306/board?userSSL=false&userUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: t1psk12t
+  jpa:
+    open-in-view: true
+    hibernate:
+      # DB ???? ??? Entity ? ?????? ??(???? ???? ?? ?? CREATE)
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    # JPA ??? ??
+    show-sql: true
+    properties:
+      # JPA ? ???? hibernate ? ???? ??? SQL ??? ??
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+      hibernate:
+        connection:
+          characterEncoding: utf8mb4
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB

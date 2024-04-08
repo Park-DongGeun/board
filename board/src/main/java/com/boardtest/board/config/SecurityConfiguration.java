@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,11 +28,13 @@ import java.util.Arrays;
 // 설정 파일 및 Bean 을 등록하기 위한 어노테이션
 // 해당 어노테이션 사용을 통해 Bean 이 싱글톤으로 SpringContainer 에 저장되도록 한다.
 @Configuration
-@EnableWebSecurity(debug = true)
+// debug = true 를 할 경우 console 에 security 로그가 뜬다.
+// 스프링 측에서 사용하지 말라고 하기 때문에 false 로 설정
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final UserAccessDeniedHandler userAccessDeniedHandler;
-    
+
     // FilterChainProxy 에 대한 커스터마이징
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
@@ -43,13 +46,27 @@ public class SecurityConfiguration {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
-    
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain exceptionFilterChain(HttpSecurity http) throws Exception{
+//        http
+//                .authorizeHttpRequests(
+//                        auth -> auth.requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs")
+//                                .permitAll()
+//                )
+//                .requestCache(cache -> cache.disable())
+//                .securityContext(context -> context.disable());
+//        return http.build();
+//    }
+
+
     // 메서드 이름 filterChain 고정
     // SecurityFilterChain 을 구성하는 전반적인 설정 수행
     // HttpSecurity 구성
     @Bean
+    // @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        // spring boot 가 3.0으로 넘어오면서 and() 메서드가 deprecated 되버림. 
+        // spring boot 가 3.0으로 넘어오면서 and() 메서드가 deprecated 되버림.
         // => 람다식 이용
 
         // 스프링은 기본적으로 X-Frame-Options Click jacking 공격을 막기 위해 X-Frame-Options 가 deny 로 설정
@@ -88,7 +105,7 @@ public class SecurityConfiguration {
         http.apply(new CustomFilterConfigurer()); // 사용자 정의 필터 적용(커스텀 인증/인가/에러 필터 적용)
         http.authorizeHttpRequests(
           auth -> auth
-                  .requestMatchers("/members", "boards").authenticated()
+                  .requestMatchers("/members", "/boards").authenticated()
         );
 
 
@@ -110,7 +127,7 @@ public class SecurityConfiguration {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // 모든 URL 에 대해 앞선 cors 정책 적용
         source.registerCorsConfiguration("/**", configuration);
-        
+
         return source;
     }
 
@@ -118,6 +135,8 @@ public class SecurityConfiguration {
     public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity>{
         @Override
         public void configure(HttpSecurity builder) throws Exception{
+            // builder.getSharedObject 는 맵 형태로 builder 가 관리하는 객체를 반환
+            // AuthenticationManager 는 인터페이스로, 구현체 ProviderManager 반환(주입)
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
