@@ -4,8 +4,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # DB Source Url
     url: jdbc:mysql://localhost:3306/board?userSSL=false&userUnicode=true&serverTimezone=Asia/Seoul
-    username: root
-    password: t1psk12t
+    username:
+    password:
   jpa:
     open-in-view: true
     hibernate:
