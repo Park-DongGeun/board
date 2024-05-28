@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController // Controller + RequestBody 의 역할
-@RequestMapping("/member") // URI 매칭
+@RequestMapping("/members") // URI 매칭
 public class MemberController {
     // 로그아웃
     // 회원가입 POST

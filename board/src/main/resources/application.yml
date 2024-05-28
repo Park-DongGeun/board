@@ -1,6 +1,6 @@
 spring:
   datasource:
-    # mysql ??
+    # mysql 연결
     driver-class-name: com.mysql.cj.jdbc.Driver
     # DB Source Url
     url: jdbc:mysql://localhost:3306/board?userSSL=false&userUnicode=true&serverTimezone=Asia/Seoul
@@ -17,13 +17,22 @@ spring:
     # JPA ??? ??
     show-sql: true
     properties:
-      # JPA ? ???? hibernate ? ???? ??? SQL ??? ??
-      hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
       hibernate:
+        # JPA ? ???? hibernate ? ???? ??? SQL ??? ??
+        format_sql: true
         connection:
           characterEncoding: utf8mb4
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+
+logging.level:
+  org.hibernate.SQL: debug #콘솔에 남기는게 아니라 로그로 남음.
+  org.hibernate.type : trace #바인딩된 파라미터까지 볼 수 있
+
+# 관리자 계정
+mail:
+  address:
+    admin: admin@gmail.com

@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }catch(IOException ioException){
             log.info(ioException.getMessage());
         }
+        log.info("AuthenticationFilter 통과");
         // 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());

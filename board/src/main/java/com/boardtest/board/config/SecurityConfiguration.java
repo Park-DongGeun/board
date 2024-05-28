@@ -36,27 +36,14 @@ public class SecurityConfiguration {
     private final UserAccessDeniedHandler userAccessDeniedHandler;
 
     // FilterChainProxy 에 대한 커스터마이징
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
-        // 예외처리 하고 싶은 url 설정
-        return web -> web.ignoring()
-                // Spring Security 에서 해당 경로에 대해 필터 적용 무시
-                .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs")
-                // Spring Security 에서 정적자원에 대한 인증 무시
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
-
 //    @Bean
-//    @Order(1)
-//    public SecurityFilterChain exceptionFilterChain(HttpSecurity http) throws Exception{
-//        http
-//                .authorizeHttpRequests(
-//                        auth -> auth.requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs")
-//                                .permitAll()
-//                )
-//                .requestCache(cache -> cache.disable())
-//                .securityContext(context -> context.disable());
-//        return http.build();
+//    public WebSecurityCustomizer webSecurityCustomizer(){
+//        // 예외처리 하고 싶은 url 설정
+//        return web -> web.ignoring()
+//                // Spring Security 에서 해당 경로에 대해 필터 적용 무시
+//                .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs")
+//                // Spring Security 에서 정적자원에 대한 인증 무시
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 //    }
 
 
@@ -64,7 +51,6 @@ public class SecurityConfiguration {
     // SecurityFilterChain 을 구성하는 전반적인 설정 수행
     // HttpSecurity 구성
     @Bean
-    // @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         // spring boot 가 3.0으로 넘어오면서 and() 메서드가 deprecated 되버림.
         // => 람다식 이용
@@ -106,6 +92,8 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(
           auth -> auth
                   .requestMatchers("/members", "/boards").authenticated()
+                  .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs")
+                        .permitAll()
         );
 
 
@@ -141,6 +129,8 @@ public class SecurityConfiguration {
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
+            // successHandler 의 경우 빈으로 등록돼지 않은 클래스다. 따라서, 필드들이 전부 빈으로 등록된 객체다 할지라도
+            // 생성자의 매개변수로 객체들을 넘겨줘야 할 필요가 있다.
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new UserAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new UserAuthenticationFailureHandler());
             // 로그인 성공/실패 시 호출하는 핸들러
@@ -148,6 +138,7 @@ public class SecurityConfiguration {
 
             builder
                     .addFilter(jwtAuthenticationFilter)
+                    // AuthenticationFilter 실행 후 VerificationFilter 실행
                     .addFilterAfter(jwtVerificationFilter, jwtAuthenticationFilter.getClass());
         }
     }
