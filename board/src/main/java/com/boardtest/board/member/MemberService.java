@@ -1,5 +1,7 @@
 package com.boardtest.board.member;
 
+import com.boardtest.board.exception.BusinessException;
+import com.boardtest.board.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
