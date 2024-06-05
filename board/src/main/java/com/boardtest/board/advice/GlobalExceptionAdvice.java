@@ -4,6 +4,7 @@ import com.boardtest.board.exception.BusinessException;
 import com.boardtest.board.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 // 여러 컨트롤러에 대한 전역적으로 ExceptionHandler 적용
 // @Component 어노테인션을 통해 빈으로 등록
 @RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionAdvice {
 
     // 내가 설계한 BusinessException 예외가 발생하면 이 곳에서 잡는다.

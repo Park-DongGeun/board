@@ -1,5 +1,6 @@
 package com.boardtest.board.member;
 
+import com.boardtest.board.answer.Answer;
 import com.boardtest.board.audit.Auditable;
 import com.boardtest.board.question.Question;
 import jakarta.persistence.*;
@@ -56,13 +57,27 @@ public class Member extends Auditable {
     // QuestionList 를 필요로 할 때 Select 쿼리문 발생
     private List<Question> questionList = new ArrayList<>();
 
+    @OneToOne
+    private Answer answer;
+
     // 자동으로 MEMBER_ROLES 테이블 생성
     // Member(1) : Member_Roles(N) 관계
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    public void add(Question q){
+    public void addQuestion(Question q){
         q.setMember(this);
         this.questionList.add(q);
+    }
+
+    public void addAnswer(Answer answer){
+        answer.setMember(this);
+        this.answer = answer;
+    }
+
+    public void removeAnswer(Answer answer){
+        if(this.answer != null){
+            this.answer = null;
+        }
     }
 }

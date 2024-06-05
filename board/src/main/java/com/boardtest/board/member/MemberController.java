@@ -1,19 +1,34 @@
 package com.boardtest.board.member;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController // Controller + RequestBody 의 역할
-@RequestMapping("/members") // URI 매칭
+@RequiredArgsConstructor
+@RequestMapping("/member") // URI 매칭
 public class MemberController {
+    private MemberService memberService;
     // 로그아웃
     
     // 회원가입 POST
+    @PostMapping
+    public ResponseEntity signUp(@RequestBody MemberDto.MemberPostDto dto){
+        memberService.signUpMember(dto);
+
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
 
     // 회원탈퇴 
     // 회원 탈퇴는 DB 에서 데이터 삭제가 아닌 상태 정보를 변경
 
     // 회원조회
+
 
     // 회원수정
     // 의문

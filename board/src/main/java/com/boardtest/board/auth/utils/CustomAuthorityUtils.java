@@ -1,5 +1,6 @@
 package com.boardtest.board.auth.utils;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 @Component
 public class CustomAuthorityUtils {
     @Value("${mail.address.admin}")
+    @Getter
     private String adminMailAddress;
     private final List<GrantedAuthority> ADMIN_ROLES = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
     private final List<GrantedAuthority> USER_ROLES = AuthorityUtils.createAuthorityList("ROLE_USER");

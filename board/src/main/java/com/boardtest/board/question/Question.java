@@ -1,5 +1,6 @@
 package com.boardtest.board.question;
 
+import com.boardtest.board.answer.Answer;
 import com.boardtest.board.audit.Auditable;
 import com.boardtest.board.member.Member;
 import jakarta.persistence.*;
@@ -20,9 +21,21 @@ public class Question extends Auditable {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private String content;
+
+    // false = 공개글, true = 비밀글
+    private Boolean isPrivate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
+
+    @OneToOne
+    private Answer answer;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionStatus questionStatus;
 
     public void removeMember(Member member){
         if(this.member != null){
@@ -44,6 +57,18 @@ public class Question extends Auditable {
             // 자식 Entity 인 Question 에서 부모 Entity 인 Member 객체를 제거했기 때문에 외래키인 memberId 가 null 로 업데이트 되기 때문에
             // Update 쿼리문 생성
             this.member = null;
+        }
+    }
+
+    public void replyAnswer(Answer answer){
+        this.questionStatus = QuestionStatus.QUESTION_ANSWERED;
+        answer.setQuestion(this);
+        this.answer = answer;
+    }
+
+    public void removeAnswer(Answer answer){
+        if(this.answer != null) {
+            this.answer = null;
         }
     }
 }
